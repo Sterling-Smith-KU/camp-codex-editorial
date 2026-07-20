@@ -159,26 +159,17 @@ await page.waitForTimeout(300);
 check('keyboard activation shows tooltip, no state change', await page.locator('#tooltip.show').count() === 1
   && (await litState()).litNodes === 21);
 
-/* ---------- 7b. theme toggle: dark default, light opt-in, persisted ---------- */
-const THEME_KEY = 'camp-codex-skill-tree:theme';
+/* ---------- 7b. light-only editorial palette, no glow ---------- */
 const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-const themeAttr = () => page.evaluate(() => document.documentElement.dataset.theme || null);
-check('dark by default', (await themeAttr()) === null && (await bodyBg()) === 'rgb(11, 14, 20)');
-check('toggle starts unpressed', (await page.getAttribute('#theme-toggle', 'aria-pressed')) === 'false');
-await page.click('#theme-toggle');
-await page.waitForTimeout(100);
-check('toggle -> light', (await themeAttr()) === 'light' && (await bodyBg()) === 'rgb(245, 242, 234)');
-check('toggle aria-pressed true', (await page.getAttribute('#theme-toggle', 'aria-pressed')) === 'true');
-check('theme stored', (await page.evaluate(k => localStorage.getItem(k), THEME_KEY)) === 'light');
-await page.screenshot({ path: join(outDir, 'light.png'), fullPage: true });
-await page.reload({ waitUntil: 'networkidle' });
-await page.waitForTimeout(300);
-check('light persists across reload', (await themeAttr()) === 'light');
-check('toggle reflects hydrated light theme', (await page.getAttribute('#theme-toggle', 'aria-pressed')) === 'true');
-await page.click('#theme-toggle');
-await page.waitForTimeout(100);
-check('toggle back to dark', (await themeAttr()) === null && (await bodyBg()) === 'rgb(11, 14, 20)');
-check('theme key cleared on dark', (await page.evaluate(k => localStorage.getItem(k), THEME_KEY)) === null);
+check('cream background', (await bodyBg()) === 'rgb(245, 244, 241)', await bodyBg());
+check('no theme toggle', await page.locator('#theme-toggle').count() === 0);
+check('no data-theme attribute', (await page.evaluate(() => document.documentElement.dataset.theme || null)) === null);
+const glow = await page.evaluate(() => ({
+  filters: [...document.querySelectorAll('#tree-svg g.node circle')].filter(c => getComputedStyle(c).filter !== 'none').length,
+  themeKey: localStorage.getItem('camp-codex-skill-tree:theme'),
+}));
+check('no drop-shadow filters on nodes', glow.filters === 0, `${glow.filters} filtered`);
+check('no theme key written', glow.themeKey === null);
 
 /* ---------- 7c. tools marquee ---------- */
 const canonicalLogos = JSON.parse(readFileSync(join(here, '..', 'src', 'data', 'toolLogos.json'), 'utf8'));
