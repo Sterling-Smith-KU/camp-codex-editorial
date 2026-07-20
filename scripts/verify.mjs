@@ -50,7 +50,7 @@ const counts = await page.evaluate(() => ({
   roots: document.querySelectorAll('#tree-svg g.node.root-node').length,
   edges: document.querySelectorAll('#tree-svg g.edge').length,
   buttons: document.querySelectorAll('#hit-layer button').length,
-  mobileRows: document.querySelectorAll('.mobile-stack .m-node').length,
+  mobileRows: document.querySelectorAll('.mobile-stack .m-row').length,
   branchLabels: [...document.querySelectorAll('.branch-label')].map(t => t.textContent),
 }));
 check('21 modules', counts.modules === 21, `got ${counts.modules}`);
@@ -254,7 +254,7 @@ check('1440x1000: tree has real size', fit1440.treeH > 500, `tree ${fit1440.tree
 const fit1366 = await fitAt(1366, 768);
 check('1366x768: no vertical scroll', fit1366.overflow <= 1, `overflow ${fit1366.overflow}px`);
 
-/* ---------- 9. mobile: stacked branches, no sideways scroll, tap shows tooltip ---------- */
+/* ---------- 9. mobile: stacked editorial list rows ---------- */
 const mCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 const m = await mCtx.newPage();
 m.on('console', msg => { if (msg.type() === 'error') errors.push('MOBILE: ' + msg.text()); });
@@ -267,21 +267,16 @@ const mob = await m.evaluate(() => ({
   treeHidden: getComputedStyle(document.querySelector('.tree-wrap')).display === 'none',
   sections: document.querySelectorAll('.mobile-branch:not(.mobile-root)').length,
   rootSections: document.querySelectorAll('.mobile-branch.mobile-root').length,
+  rows: document.querySelectorAll('.mobile-stack .m-row').length,
+  buttons: document.querySelectorAll('.mobile-stack button').length,
+  firstRow: (document.querySelector('.mobile-stack .m-row .m-body') || {}).textContent || '',
   stripVisible: !!document.querySelector('.built-with') && getComputedStyle(document.querySelector('.built-with')).display !== 'none',
 }));
 check('mobile: no horizontal scroll', mob.scrollW <= mob.winW + 1, `${mob.scrollW} > ${mob.winW}`);
-check('mobile: tree hidden, 3 stacked branches + Josh root', mob.treeHidden && mob.sections === 3 && mob.rootSections === 1);
+check('mobile: tree hidden, 3 branches + Josh', mob.treeHidden && mob.sections === 3 && mob.rootSections === 1);
+check('mobile: 21 list rows, no buttons', mob.rows === 21 && mob.buttons === 0, `rows ${mob.rows}, buttons ${mob.buttons}`);
+check('mobile: description inline in row', mob.firstRow.startsWith('Curiosity — ') && mob.firstRow.length > 60, mob.firstRow.slice(0, 40));
 check('mobile: logo strip present', mob.stripVisible);
-await m.tap('.m-node[data-id="app-anatomy"]');
-await m.waitForTimeout(250);
-const mLit = await m.evaluate(() => ({
-  lit: document.querySelectorAll('.mobile-stack .m-node.unlocked').length,
-  litIn: document.querySelectorAll('.mobile-stack li.lit-in').length,
-  counters: document.querySelectorAll('[data-m-branch-count]').length,
-  tip: !!document.querySelector('#tooltip.show'),
-}));
-check('mobile: all 21 rows lit + tap shows tooltip', mLit.lit === 21 && mLit.tip, JSON.stringify(mLit));
-check('mobile: connectors lit, no counters', mLit.litIn === 21 && mLit.counters === 0);
 const mJosh = await m.evaluate(() => {
   const a = document.querySelector('.mobile-root h2 a');
   const desc = document.querySelector('.mobile-root .m-root-desc');
