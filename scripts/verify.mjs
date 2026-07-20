@@ -79,7 +79,7 @@ const domEdges = await page.evaluate(() => [...document.querySelectorAll('#tree-
 check('edge set matches Mermaid diagram', stable(domEdges.sort()) === stable([...expectedEdges].sort()));
 
 /* ---------- 3. fonts embedded and active ---------- */
-const fontsOk = await page.evaluate(() => document.fonts.check('700 15px "Chakra Petch"') && document.fonts.check('13px Inter'));
+const fontsOk = await page.evaluate(() => document.fonts.check('700 15px Fraunces') && document.fonts.check('600 15px Fraunces') && document.fonts.check('13px Inter'));
 check('embedded fonts active', fontsOk);
 
 /* ---------- 4. tooltip content verbatim for all 21 modules ---------- */
