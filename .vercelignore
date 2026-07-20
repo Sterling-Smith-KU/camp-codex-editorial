@@ -1,0 +1,7 @@
+node_modules
+verify-out
+docs
+scripts
+package.json
+package-lock.json
+camp-codex-skill-tree.md

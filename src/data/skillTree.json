@@ -1,0 +1,27 @@
+{
+  "modules": [
+    { "id": "curiosity", "branch": "creativity", "order": 1, "name": "Curiosity", "description": "Test new tools quickly to see if they're valuable instead of getting wrapped up in the hype." },
+    { "id": "burning-questions", "branch": "creativity", "order": 2, "name": "Burning Questions", "description": "Bring sharp questions to every session and ask AI what project would teach you what you want." },
+    { "id": "own-the-build", "branch": "creativity", "order": 3, "name": "Own the Build", "description": "Treat AI as a co-creative partner while you steer, so the vision and decisions stay yours." },
+    { "id": "start-small", "branch": "creativity", "order": 4, "name": "Start Small", "description": "Scope tightly and resist grandiose visions, because AI will happily over-build and burn your token budget." },
+    { "id": "relentless-iteration", "branch": "creativity", "order": 5, "name": "Relentless Iteration", "description": "Build, fail, and refine constantly. Credits reset, so take risks and learn through the reps." },
+    { "id": "demo-and-feedback", "branch": "creativity", "order": 6, "name": "Demo and Feedback", "description": "Show working progress weekly and sharpen your builds through group critique, like forced pauses and blank-state handling." },
+    { "id": "portfolio-mindset", "branch": "creativity", "order": 7, "name": "Portfolio Mindset", "description": "Ship projects worth showcasing, then publish them publicly so your work markets itself to future opportunities." },
+
+    { "id": "llm-fundamentals", "branch": "ai-skills", "order": 1, "name": "LLM Fundamentals", "description": "Understand the stochastic machine underneath. It predicts the next token, so design around that, not around intelligence." },
+    { "id": "coding-agents", "branch": "ai-skills", "order": 2, "name": "Coding Agents", "description": "Wield harnesses like Claude Code and Codex that wrap an LLM with file access and tools." },
+    { "id": "context-engineering", "branch": "ai-skills", "order": 3, "name": "Context Engineering", "description": "Keep context under 40 percent, clear it often, and decompose tasks so the agent never loses the plot." },
+    { "id": "version-control", "branch": "ai-skills", "order": 4, "name": "Version Control", "description": "Track every change in GitHub and run Claude Code from the VS Code terminal to dodge path errors." },
+    { "id": "skill-building", "branch": "ai-skills", "order": 5, "name": "Skill Building", "description": "Encode repeatable workflows as markdown skill files, reusable protocols the agent follows every single time." },
+    { "id": "superpowers", "branch": "ai-skills", "order": 6, "name": "Superpowers", "description": "Install a full software development methodology into your agent, with planning, briefs, and composable skills built in." },
+    { "id": "mcp-connections", "branch": "ai-skills", "order": 7, "name": "MCP Connections", "description": "Connect agents to GitHub, Notion, Chrome DevTools, and design tools so AI operates your whole stack." },
+
+    { "id": "app-anatomy", "branch": "web-app-design", "order": 1, "name": "App Anatomy", "description": "See the request-response cycle: browser asks, server hits the database, and HTML, CSS, and JavaScript render." },
+    { "id": "front-end-vs-back-end", "branch": "web-app-design", "order": 2, "name": "Front-end vs. Back-end", "description": "Separate the rendered interface from the logic and data, and know when a static site needs neither." },
+    { "id": "apis", "branch": "web-app-design", "order": 3, "name": "APIs", "description": "Outsource hard problems like auth and databases to services instead of dangerously rolling your own." },
+    { "id": "happy-path", "branch": "web-app-design", "order": 4, "name": "Happy Path", "description": "Talk through the ideal user journey out loud, transcribe it, and feed it in as your first requirements." },
+    { "id": "mermaid-blueprints", "branch": "web-app-design", "order": 5, "name": "Mermaid Blueprints", "description": "Diagram architecture as text so AI reads exact connections instead of misinterpreting a picture." },
+    { "id": "design-systems", "branch": "web-app-design", "order": 6, "name": "Design Systems", "description": "Use Google Stitch palettes and ShadCN components to escape the generic AI-generated look." },
+    { "id": "automated-qa", "branch": "web-app-design", "order": 7, "name": "Automated QA", "description": "Test in real Chrome via DevTools MCP and hunt CSS conflicts when a style change won't stick." }
+  ]
+}
