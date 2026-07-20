@@ -59,7 +59,7 @@ check('1 root', counts.roots === 1, `got ${counts.roots}`);
 check('35 edges', counts.edges === 35, `got ${counts.edges}`);
 check('21 hit buttons', counts.buttons === 21, `got ${counts.buttons}`);
 check('21 mobile rows', counts.mobileRows === 21, `got ${counts.mobileRows}`);
-check('branch labels', stable(counts.branchLabels.sort()) === stable(['AI SKILLS', 'CREATIVITY', 'WEB & APP DESIGN']), counts.branchLabels.join('|'));
+check('branch labels', stable(counts.branchLabels.sort()) === stable(['AI Skills', 'Creativity', 'Web & App Design']), counts.branchLabels.join('|'));
 
 const expectedEdges = [
   'root->curiosity', 'root->llm-fundamentals', 'root->app-anatomy',
@@ -119,6 +119,26 @@ const joshTipBox = await page.locator('#tooltip').boundingBox();
 check('Josh tooltip on-screen', joshTipBox && joshTipBox.x >= 0 && joshTipBox.y >= 0
   && joshTipBox.x + joshTipBox.width <= 1440 && joshTipBox.y + joshTipBox.height <= 1000);
 await page.mouse.move(720, 10);
+
+/* ---------- 4c. editorial tree styling ---------- */
+await page.waitForTimeout(400);
+const treeStyle = await page.evaluate(() => {
+  const rootCircle = document.querySelector('#tree-svg g.node.root-node circle');
+  const core = document.querySelector('#tree-svg g.edge.lit .edge-core');
+  return {
+    rootFill: getComputedStyle(rootCircle).fill,
+    halos: document.querySelectorAll('#tree-svg .edge-halo').length,
+    chips: document.querySelectorAll('#tree-svg .branch-chip-bg').length,
+    underlines: document.querySelectorAll('#tree-svg .branch-underline').length,
+    coreWidth: parseFloat(getComputedStyle(core).strokeWidth),
+    ttTransform: getComputedStyle(document.querySelector('#tooltip .tt-name')).textTransform,
+  };
+});
+check('root node filled green', treeStyle.rootFill === 'rgb(63, 81, 72)', treeStyle.rootFill);
+check('no edge halos', treeStyle.halos === 0);
+check('branch chips replaced by underlines', treeStyle.chips === 0 && treeStyle.underlines === 3);
+check('thin edges', treeStyle.coreWidth <= 3.5, `${treeStyle.coreWidth}px`);
+check('tooltip title not uppercased', treeStyle.ttTransform === 'none');
 
 /* ---------- 5. everything unlocked on load; clicking never changes state ---------- */
 const litState = () => page.evaluate(() => ({
