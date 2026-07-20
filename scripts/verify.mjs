@@ -191,29 +191,44 @@ const glow = await page.evaluate(() => ({
 check('no drop-shadow filters on nodes', glow.filters === 0, `${glow.filters} filtered`);
 check('no theme key written', glow.themeKey === null);
 
-/* ---------- 7c. tools marquee ---------- */
+/* ---------- 7c. static "Built with" logo strip ---------- */
 const canonicalLogos = JSON.parse(readFileSync(join(here, '..', 'src', 'data', 'toolLogos.json'), 'utf8'));
 const logoData = await page.evaluate(() => window.TOOL_LOGOS);
-check('marquee data matches src/data/toolLogos.json', stable(logoData) === stable(canonicalLogos));
-const mq = await page.evaluate(() => {
-  const track = document.querySelector('.tools-marquee #marquee-track');
-  const groups = [...document.querySelectorAll('.marquee-group')];
-  const cs = track && getComputedStyle(track);
-  return track && {
-    groups: groups.length,
-    perGroup: groups.map(g => g.querySelectorAll('.tool-logo').length),
-    labels: [...groups[0].querySelectorAll('.tool-logo')].map(s => s.getAttribute('aria-label')),
-    secondHidden: groups[1] && groups[1].getAttribute('aria-hidden') === 'true',
-    animation: cs.animationName,
-    playState: cs.animationPlayState,
-    label: document.querySelector('.marquee-label').textContent.trim(),
+check('logo data matches src/data/toolLogos.json', stable(logoData) === stable(canonicalLogos));
+const strip = await page.evaluate(() => {
+  const el = document.getElementById('logo-strip');
+  const logos = el ? [...el.querySelectorAll('.tool-logo')] : [];
+  return {
+    present: !!el,
+    count: logos.length,
+    labels: logos.map(s => s.getAttribute('aria-label')),
+    animation: el ? getComputedStyle(el).animationName : '',
+    marqueeLeftovers: document.querySelectorAll('.marquee-track, .marquee-group, .marquee-viewport').length,
   };
 });
-check('marquee: 2 groups of 10 logos', !!mq && mq.groups === 2 && mq.perGroup[0] === 10 && mq.perGroup[1] === 10);
-check('marquee: all 10 tools in order', !!mq && stable(mq.labels) === stable(['OpenAI', 'Anthropic', 'Gemini', 'Notion', 'Supabase', 'Mermaid', 'Google Stitch', 'VS Code', 'GitHub', 'YouTube']));
-check('marquee: duplicate group aria-hidden', !!mq && mq.secondHidden === true);
-check('marquee: animation running', !!mq && mq.animation === 'marquee-scroll' && mq.playState === 'running');
-check('marquee: label text', !!mq && mq.label === 'Built with');
+check('strip: 10 logos, once', strip.present && strip.count === 10 && strip.marqueeLeftovers === 0, JSON.stringify(strip));
+check('strip: all tools in order', stable(strip.labels) === stable(['OpenAI', 'Anthropic', 'Gemini', 'Notion', 'Supabase', 'Mermaid', 'Google Stitch', 'VS Code', 'GitHub', 'YouTube']));
+check('strip: no animation', strip.animation === 'none');
+
+/* ---------- 7d. editorial nav + hero ---------- */
+const nav = await page.evaluate(() => {
+  const siteNav = document.querySelector('.site-nav');
+  return {
+    wordmark: (document.querySelector('.site-nav .wordmark') || {}).textContent,
+    sticky: siteNav ? getComputedStyle(siteNav).position : '',
+    links: [...document.querySelectorAll('.site-nav .nav-links a')].map(a => a.href),
+    heroH1: (document.querySelector('.hero h1') || {}).textContent,
+    caption: (document.querySelector('.hero .hero-caption') || {}).textContent,
+  };
+});
+check('nav wordmark', nav.wordmark === 'Camp Codex');
+check('nav is sticky', nav.sticky === 'sticky');
+check('nav links', nav.links.length === 3
+  && nav.links[0] === 'https://camp-codex-skill-tree.vercel.app/'
+  && nav.links[1] === 'https://joshwexler.com/'
+  && nav.links[2] === 'https://joshwexler.com/coaching/', nav.links.join(' | '));
+check('hero headline', nav.heroH1 === 'The Camp Codex curriculum, mapped.');
+check('hero caption', nav.caption === 'Three branches. 21 modules. Hover any node.');
 
 /* ---------- 8. desktop screenshot ---------- */
 await page.mouse.move(720, 10);
@@ -252,11 +267,11 @@ const mob = await m.evaluate(() => ({
   treeHidden: getComputedStyle(document.querySelector('.tree-wrap')).display === 'none',
   sections: document.querySelectorAll('.mobile-branch:not(.mobile-root)').length,
   rootSections: document.querySelectorAll('.mobile-branch.mobile-root').length,
-  marqueeVisible: !!document.querySelector('.tools-marquee') && getComputedStyle(document.querySelector('.tools-marquee')).display !== 'none',
+  stripVisible: !!document.querySelector('.built-with') && getComputedStyle(document.querySelector('.built-with')).display !== 'none',
 }));
 check('mobile: no horizontal scroll', mob.scrollW <= mob.winW + 1, `${mob.scrollW} > ${mob.winW}`);
 check('mobile: tree hidden, 3 stacked branches + Josh root', mob.treeHidden && mob.sections === 3 && mob.rootSections === 1);
-check('mobile: marquee present', mob.marqueeVisible);
+check('mobile: logo strip present', mob.stripVisible);
 await m.tap('.m-node[data-id="app-anatomy"]');
 await m.waitForTimeout(250);
 const mLit = await m.evaluate(() => ({
@@ -284,8 +299,8 @@ await rm.goto(file, { waitUntil: 'networkidle' });
 await rm.click('#hit-layer button[data-id="curiosity"]');
 await rm.waitForTimeout(200);
 check('reduced-motion: click shows tooltip', await rm.locator('#tooltip.show').count() === 1);
-const rmMarquee = await rm.evaluate(() => getComputedStyle(document.getElementById('marquee-track')).animationName);
-check('reduced-motion: marquee static', rmMarquee === 'none');
+const rmStrip = await rm.evaluate(() => { const el = document.getElementById('logo-strip'); return el ? getComputedStyle(el).animationName : ''; });
+check('reduced-motion: strip static', rmStrip === 'none');
 await rmCtx.close();
 
 /* ---------- report ---------- */
