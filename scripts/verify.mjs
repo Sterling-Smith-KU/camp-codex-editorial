@@ -219,6 +219,7 @@ const nav = await page.evaluate(() => {
     links: [...document.querySelectorAll('.site-nav .nav-links a')].map(a => a.href),
     heroH1: (document.querySelector('.hero h1') || {}).textContent,
     caption: (document.querySelector('.hero .hero-caption') || {}).textContent,
+    intro: (document.querySelector('.hero .hero-intro') || {}).textContent,
   };
 });
 check('nav wordmark', nav.wordmark === 'Camp Codex');
@@ -228,6 +229,7 @@ check('nav links', nav.links.length === 3
   && nav.links[1] === 'https://joshwexler.com/'
   && nav.links[2] === 'https://joshwexler.com/coaching/', nav.links.join(' | '));
 check('hero headline', nav.heroH1 === 'The Camp Codex curriculum, mapped.');
+check('hero intro verbatim', nav.intro === 'The complete Camp Codex builder curriculum — creativity, AI skills, and web & app design — drawn as one connected tree.');
 check('hero caption', nav.caption === 'Three branches. 21 modules. Hover any node.');
 
 /* ---------- 8. desktop screenshot ---------- */

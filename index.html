@@ -17,7 +17,6 @@
   color-scheme: light;
   /* surfaces */
   --bg: #F5F4F1;
-  --tint: #E8EBE7;
   --tooltip-bg: #FFFFFF;
   --tooltip-ink: #1A1A1A;
   --shadow: rgba(26, 26, 26, 0.10);
@@ -25,16 +24,15 @@
   --ink: #1A1A1A;
   --ink-muted: #4A4A4A;
   --node-text: #4A4A4A;
-  --node-text-bright: #1A1A1A;
   --surface-ink: #F5F4F1;   /* label text on filled node circles */
   --m-root-ink: #4A4A4A;
   /* accent + branches (desaturated editorial register) */
   --accent: #3F5148;
+  --accent-strong: #35443C;
   --accent-ink: #F5F4F1;
   --root: #3F5148;
   --creativity: #9C5B4F;
-  --ai-skills: #A98243;
-  --ai-skills-text: #A98243;
+  --ai-skills: #8A6A34;
   --web-design: #5C7A8A;
   /* lines */
   --hairline: #D8D5CC;
@@ -94,7 +92,7 @@ body {
   padding: 10px 18px;
   font-weight: 600;
 }
-.nav-links a.btn-primary:hover, .nav-links a.btn-primary:focus-visible { background: #35443C; }
+.nav-links a.btn-primary:hover, .nav-links a.btn-primary:focus-visible { background: var(--accent-strong); }
 .hero { max-width: 1160px; margin: 0 auto; padding: 40px 24px 4px; }
 .hero h1 {
   font-family: var(--font-display);
@@ -167,7 +165,7 @@ body {
 .node.decorative circle { fill: var(--connector-fill); stroke: var(--hairline); }
 .node.root-node circle { fill: var(--accent); stroke: var(--accent); }
 .node.root-node text { fill: var(--accent-ink); }
-.node.root-node.hovered circle { fill: #35443C; stroke: #35443C; }
+.node.root-node.hovered circle { fill: var(--accent-strong); stroke: var(--accent-strong); }
 /* branch base labels */
 .branch-label {
   font-family: var(--font-display);
@@ -535,7 +533,6 @@ const EDGES = [
   ["mermaid-blueprints", "b-merge"], ["b-out3", "b-merge"],
   ["b-merge", "b-top1"], ["b-merge", "b-top2"]
 ];
-
 
 const MODULES = {};
 for (const m of SKILL_TREE_DATA.modules) MODULES[m.id] = m;
